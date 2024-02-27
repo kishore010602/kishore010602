@@ -21,3 +21,36 @@ You can click the Preview link to take a look at your changes.
             fail("Exception thrown while logging in donor profile: " + e.getMessage());
         }
     }
+@Test
+    void updateDonorNameByIdTest() {
+        Donor donor = new Donor("John", "john@example.com", "password");
+        donor = donorRepositoryDao.save(donor);
+
+        String newName = "John Doe";
+        try {
+            Donor updatedDonor = donorService.updateDonorNameById(donor.getId(), newName);
+            assertEquals(newName, updatedDonor.getName());
+
+            Optional<Donor> optionalDonor = donorRepositoryDao.findById(donor.getId());
+            assertTrue(optionalDonor.isPresent());
+            assertEquals(newName, optionalDonor.get().getName());
+        } catch (DonorExceptions e) {
+            fail("Exception thrown while updating donor's name: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void deleteDonorByIdTest() {
+        Donor donor = new Donor("Jane", "jane@example.com", "password");
+        donor = donorRepositoryDao.save(donor);
+
+        try {
+            String result = donorService.deleteDonorById(donor.getId());
+            assertEquals("Profile deleted successfully!!", result);
+
+            Optional<Donor> optionalDonor = donorRepositoryDao.findById(donor.getId());
+            assertFalse(optionalDonor.isPresent());
+        } catch (DonorExceptions e) {
+            fail("Exception thrown while deleting donor profile: " + e.getMessage());
+        }
+    }
